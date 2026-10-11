@@ -86,7 +86,7 @@ struct CodeExecutionView: View {
         // 模拟代码执行（实际应该调用后端服务）
         Task {
             do {
-                let result = await executeCode(code, language: language)
+                let result = try await executeCode(code, language: language)
                 output = result
                 history.insert((language: language, code: code, output: result, timestamp: Date()), at: 0)
             } catch {

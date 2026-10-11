@@ -71,10 +71,6 @@
         <string>UIInterfaceOrientationLandscapeLeft</string>
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
-    <key>UIDeviceFamily</key>
-    <array>
-        <integer>1</integer>
-    </array>
     <key>NSSpeechRecognitionUsageDescription</key>
     <string>此应用使用语音识别功能将您的语音转换为文字</string>
 </dict>

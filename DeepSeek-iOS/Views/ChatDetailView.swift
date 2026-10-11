@@ -224,6 +224,7 @@ struct MessageBubble: View {
 /// 加载动画气泡
 struct LoadingBubble: View {
     @State private var dots = 0
+    @State private var cancellables = Set<AnyCancellable>()
     
     var body: some View {
         HStack {
@@ -246,8 +247,6 @@ struct LoadingBubble: View {
                 .store(in: &cancellables)
         }
     }
-    
-    private var cancellables = Set<AnyCancellable>()
 }
 
 /// 附件视图

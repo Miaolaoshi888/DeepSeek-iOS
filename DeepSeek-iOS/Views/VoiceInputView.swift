@@ -166,7 +166,10 @@ struct VoiceInputView: View {
                     if let result = result {
                         DispatchQueue.main.async {
                             self.transcript = result.bestTranscription.formattedString
-                            self.confidence = result.confidence
+                            let segments = result.bestTranscription.segments
+                            self.confidence = segments.isEmpty
+                                ? 0
+                                : Double(segments.map { $0.confidence }.reduce(0, +)) / Double(segments.count)
                         }
                     }
                     
