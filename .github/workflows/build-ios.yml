@@ -16,9 +16,6 @@ jobs:
     - name: Set up Xcode
       run: sudo xcode-select -switch /Applications/Xcode_15.0.app
     
-    - name: List files
-      run: ls -la && ls -la DeepSeek-iOS/
-    
     - name: Build
       run: |
         cd DeepSeek-iOS
@@ -26,8 +23,7 @@ jobs:
           -scheme DeepSeek-iOS \
           -destination 'generic/platform=iOS' \
           -configuration Release \
-          CODE_SIGNING_ALLOWED=NO \
-          2>&1 | tee build.log
+          CODE_SIGNING_ALLOWED=NO
         
     - name: Archive
       run: |
@@ -37,8 +33,7 @@ jobs:
           -destination 'generic/platform=iOS' \
           -configuration Release \
           -archivePath Build/DeepSeek-iOS.xcarchive \
-          CODE_SIGNING_ALLOWED=NO \
-          2>&1 | tee archive.log
+          CODE_SIGNING_ALLOWED=NO
         
     - name: Export IPA
       run: |
@@ -60,11 +55,11 @@ jobs:
         xcodebuild -exportArchive \
           -archivePath Build/DeepSeek-iOS.xcarchive \
           -exportPath Build/Exported \
-          -exportOptionsPlist ExportOptions.plist \
-          2>&1 | tee export.log
+          -exportOptionsPlist ExportOptions.plist
         
     - name: Upload IPA
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: DeepSeek-iOS
         path: DeepSeek-iOS/Build/Exported/DeepSeek-iOS.ipa
+        retention-days: 7
