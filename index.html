@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DSH 快速访问</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .link-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .link-label {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+        .link {
+            color: #667eea;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .button:active {
+            transform: translateY(0);
+        }
+        .tips {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .tips h3 {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .tips ul {
+            color: #856404;
+            font-size: 12px;
+            padding-left: 20px;
+        }
+        .tips li {
+            margin-bottom: 5px;
+        }
+        .status {
+            text-align: center;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 DeepSeek Harness</h1>
+        <p class="subtitle">iPhone 16 Pro Max 访问入口</p>
+        
+        <div id="status" class="status disconnected">
+            正在检测连接...
+        </div>
+        
+        <div class="link-box">
+            <div class="link-label">访问地址</div>
+            <a href="http://192.168.1.91:3080" class="link">192.168.1.91:3080</a>
+        </div>
+        
+        <a href="http://192.168.1.91:3080" class="button">
+            打开 DeepSeek Harness
+        </a>
+        
+        <a href="http://192.168.1.91:3080" class="button" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+            在新标签页打开
+        </a>
+        
+        <div class="tips">
+            <h3>💡 使用提示</h3>
+            <ul>
+                <li>确保 iPhone 和电脑在同一 WiFi</li>
+                <li>点击"添加到主屏幕"获得原生体验</li>
+                <li>建议使用 Safari 浏览器</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // 检测连接状态
+        async function checkConnection() {
+            const statusEl = document.getElementById('status');
+            try {
+                const response = await fetch('http://192.168.1.91:3080', { 
+                    method: 'HEAD',
+                    mode: 'no-cors'
+                });
+                statusEl.className = 'status connected';
+                statusEl.textContent = '✅ 已连接 - 点击按钮访问';
+            } catch (error) {
+                statusEl.className = 'status disconnected';
+                statusEl.textContent = '⚠️ 无法连接 - 请检查网络';
+            }
+        }
+        
+        checkConnection();
+    </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+# Fastfile - Fastlane 配置
+# 使用方法：bundle exec fastlane <lane_name>
+
+default_platform(:ios)
+
+platform :ios do
+  
+  # 构建和测试
+  desc "Build and test iOS app"
+  lane :build do
+    build_app(
+      workspace: "DeepSeek-iOS.xcworkspace",
+      scheme: "DeepSeek-iOS",
+      configuration: "Debug",
+      skip_build_package: true,
+      skip_archive: false,
+      export_options: {
+        method: "development"
+      }
+    )
+  end
+  
+  # 运行测试
+  desc "Run unit tests"
+  lane :test do
+    test(
+      workspace: "DeepSeek-iOS.xcworkspace",
+      scheme: "DeepSeek-iOS",
+      destination: "platform=iOS Simulator,name=iPhone 16 Pro Max",
+      skip_build: true,
+      only_testing: ["DeepSeek-iOS/ChatViewModelTests"]
+    )
+  end
+  
+  # 构建模拟器版本
+  desc "Build for simulator"
+  lane :build_simulator do
+    build_app(
+      workspace: "DeepSeek-iOS.xcworkspace",
+      scheme: "DeepSeek-iOS",
+      destination: "platform=iOS Simulator,name=iPhone 16 Pro Max",
+      configuration: "Debug",
+      skip_package_ipa: true
+    )
+  end
+  
+  # Archive 用于分发
+  desc "Archive for distribution"
+  lane :archive do
+    archive(
+      workspace: "DeepSeek-iOS.xcworkspace",
+      scheme: "DeepSeek-iOS",
+      configuration: "Release",
+      export_options: {
+        method: "app-store"
+      }
+    )
+  end
+  
+  # 发布到 TestFlight
+  desc "Deploy to TestFlight"
+  lane :beta do
+    build_app(
+      workspace: "DeepSeek-iOS.xcworkspace",
+      scheme: "DeepSeek-iOS",
+      configuration: "Release",
+      export_options: {
+        method: "app-store"
+      }
+    )
+    
+    upload_to_testflight(
+      skip_waiting_for_build_processing: false,
+      distribute_external: false
+    )
+  end
+  
+  # 提交 App Store 审核
+  desc "Submit to App Store"
+  lane :release do
+    build_app(
+      workspace: "DeepSeek-iOS.xcworkspace",
+      scheme: "DeepSeek-iOS",
+      configuration: "Release",
+      export_options: {
+        method: "app-store"
+      }
+    )
+    
+    upload_to_app_store(
+      skip_metadata: false,
+      skip_screenshots: true,
+      submit_for_review: true,
+      automatic_release: false
+    )
+  end
+  
+  # 构建开发版本
+  desc "Build for development"
+  lane :dev do
+    build_app(
+      workspace: "DeepSeek-iOS.xcworkspace",
+      scheme: "DeepSeek-iOS",
+      configuration: "Debug",
+      export_options: {
+        method: "development"
+      }
+    )
+  end
+  
+  # 构建 Ad Hoc 版本
+  desc "Build for Ad Hoc distribution"
+  lane :adhoc do
+    build_app(
+      workspace: "DeepSeek-iOS.xcworkspace",
+      scheme: "DeepSeek-iOS",
+      configuration: "Release",
+      export_options: {
+        method: "ad-hoc"
+      }
+    )
+  end
+  
+  # 清理构建
+  desc "Clean build folder"
+  lane :clean do
+    clean_build_artifacts
+  end
+  
+  # 获取版本信息
+  desc "Get current version"
+  lane :version do
+    match(
+      type: "appstore",
+      readonly: true
+    )
+    
+    puts "Current version: #{current_version}"
+    puts "Build number: #{git_commit[:short_hash]}"
+  end
+  
+end
