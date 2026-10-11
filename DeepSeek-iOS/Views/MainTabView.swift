@@ -30,7 +30,7 @@ struct MainTabView: View {
                 .tag(2)
             
             // 设置标签
-            SettingsTabView()
+            SettingsTabView(viewModel: viewModel)
                 .tabItem {
                     Label("设置", systemImage: "gearshape.fill")
                 }
@@ -43,6 +43,7 @@ struct MainTabView: View {
 /// 设置标签页
 struct SettingsTabView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+    @ObservedObject var viewModel: ChatViewModel
     @State private var defaultModel: String = "agnes-2.5-flash"
     
     let models = ["agnes-2.5-flash", "agnes-2.0-flash"]

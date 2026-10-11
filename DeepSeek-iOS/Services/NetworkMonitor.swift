@@ -14,7 +14,7 @@ class NetworkMonitor: ObservableObject {
     private let reachability: Reachability
     
     private init() {
-        reachability = Reachability()!
+        reachability = Reachability()
         startMonitoring()
     }
     
@@ -62,6 +62,18 @@ class Reachability {
     var currentConnectionType: NetworkMonitor.ConnectionType {
         return .wifi
     }
+    
+    func startNotifier() throws {
+        // 简化实现：无需真实监听
+    }
+    
+    func stopNotifier() {
+        // 简化实现：无需真实监听
+    }
+}
+
+extension Notification.Name {
+    static let ReachabilityChanged = Notification.Name("ReachabilityChanged")
 }
 
 enum NetworkType {

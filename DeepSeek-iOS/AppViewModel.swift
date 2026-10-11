@@ -1,28 +1,20 @@
 import SwiftUI
 import Combine
 
-/// DeepSeek iOS 应用 - 主入口点
-@main
-struct DeepSeekApp: App {
-    @StateObject private var viewModel = AppViewModel()
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environmentObject(viewModel)
-                .onAppear {
-                    viewModel.checkAPIKey()
-                }
-        }
-    }
-}
-
 /// 应用级视图模型
 class AppViewModel: ObservableObject {
     @Published var isAuthenticated = false
+    @Published var isLoading = false
     @Published var apiKey: String = ""
     @Published var defaultModel: String = "agnes-2.5-flash"
     @Published var showPrivacyPolicy = false
+    
+    /// 可选模型列表
+    let models: [String] = [
+        "agnes-2.5-flash",
+        "agnes-2.0-flash",
+        "agnes-2.0-pro"
+    ]
     
     private let apiKeyStorage = UserDefaults.standard
     

@@ -8,6 +8,8 @@ struct VoiceInputView: View {
     @State private var transcript = ""
     @State private var recognitionError: Error?
     @State private var confidence: Double = 0
+    @State private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    @State private var recognitionTask: SFSpeechRecognitionTask?
     
     private let speechRecognizer = SFSpeechRecognizer()
     private var recognizer: SFSpeechRecognizer? {
@@ -17,8 +19,6 @@ struct VoiceInputView: View {
     private var audioSession: AVAudioSession {
         return AVAudioSession.sharedInstance()
     }
-    
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     
     var body: some View {
         VStack(spacing: 30) {
@@ -160,8 +160,6 @@ struct VoiceInputView: View {
                 try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
                 try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
                 
-                guard let inputNode = AVAudioPlayerNode() else { return }
-                
                 let recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
                     guard let self = self else { return }
                     
@@ -196,8 +194,6 @@ struct VoiceInputView: View {
         transcript = ""
         confidence = 0
     }
-    
-    private var recognitionTask: SFSpeechRecognitionTask?
 }
 
 /// 波形动画视图
@@ -209,14 +205,12 @@ struct WaveAnimation: View {
         GeometryReader { geometry in
             ZStack {
                 ForEach(0..<5) { index in
+                    let radius = CGFloat(20 + sin(phase + Double(index) * 0.5) * 10)
                     Circle()
                         .fill(Color.blue.opacity(0.3))
-                        .frame(
-                            width: 20 + sin(phase + Double(index) * 0.5) * 10,
-                            height: 20 + sin(phase + Double(index) * 0.5) * 10
-                        )
+                        .frame(width: radius, height: radius)
                         .position(
-                            x: geometry.size.width / 2 + Double(index - 2) * 30,
+                            x: geometry.size.width / 2 + CGFloat(index - 2) * 30,
                             y: geometry.size.height / 2
                         )
                 }

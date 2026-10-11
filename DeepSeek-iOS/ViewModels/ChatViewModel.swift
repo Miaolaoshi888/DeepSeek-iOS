@@ -10,6 +10,14 @@ class ChatViewModel: ObservableObject {
     @Published var showSettings = false
     @Published var showModelPicker = false
     @Published var showFilePicker = false
+    @Published var defaultModel: String = "agnes-2.5-flash"
+    
+    /// 可选模型列表
+    let models: [String] = [
+        "agnes-2.5-flash",
+        "agnes-2.0-flash",
+        "agnes-2.0-pro"
+    ]
     
     private let apiService = APIService.shared
     private let storageService = StorageService.shared

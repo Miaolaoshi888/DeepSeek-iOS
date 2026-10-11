@@ -3,71 +3,63 @@ name: Build iOS App
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: macos-14
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-    
-    - name: List available Xcode versions
-      run: ls -la /Applications | grep Xcode
-    
-    - name: Set up Xcode
-      run: sudo xcode-select -switch /Applications/Xcode_15.0.1.app
-    
-    - name: List schemes
+
+    - name: Show available Xcode versions
+      run: ls -d /Applications/Xcode*.app
+
+    - name: Select latest available Xcode
       run: |
-        cd DeepSeek-iOS
-        xcodebuild -list
-    
-    - name: Build
+        XCODE_APP=$(ls -d /Applications/Xcode*.app | sort -V | tail -n 1)
+        echo "Using $XCODE_APP"
+        sudo xcode-select -switch "$XCODE_APP"
+        xcodebuild -version
+
+    - name: Install xcodegen
+      run: brew install xcodegen
+
+    - name: Generate Xcode project
+      run: xcodegen generate --spec project.yml
+
+    - name: Build for iOS (no code signing)
       run: |
-        cd DeepSeek-iOS
         xcodebuild build \
+          -project DeepSeek-iOS.xcodeproj \
           -scheme DeepSeek-iOS \
           -destination 'generic/platform=iOS' \
           -configuration Release \
-          CODE_SIGNING_ALLOWED=NO
-        
-    - name: Archive
+          CODE_SIGNING_ALLOWED=NO \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGN_IDENTITY="" \
+          -derivedDataPath build
+
+    - name: Package app bundle
       run: |
-        cd DeepSeek-iOS
-        xcodebuild archive \
-          -scheme DeepSeek-iOS \
-          -destination 'generic/platform=iOS' \
-          -configuration Release \
-          -archivePath Build/DeepSeek-iOS.xcarchive \
-          CODE_SIGNING_ALLOWED=NO
-        
-    - name: Export IPA
-      run: |
-        cd DeepSeek-iOS
-        cat > ExportOptions.plist << 'EOF'
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-            <key>method</key>
-            <string>development</string>
-            <key>uploadBitcode</key>
-            <false/>
-            <key>uploadSymbols</key>
-            <true/>
-        </dict>
-        </plist>
-        EOF
-        xcodebuild -exportArchive \
-          -archivePath Build/DeepSeek-iOS.xcarchive \
-          -exportPath Build/Exported \
-          -exportOptionsPlist ExportOptions.plist
-        
-    - name: Upload IPA
+        mkdir -p output
+        APP_PATH=$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name "*.app" | head -n 1)
+        echo "Found app: $APP_PATH"
+        if [ -z "$APP_PATH" ]; then
+          echo "Build product not found"
+          exit 1
+        fi
+        cp -R "$APP_PATH" output/
+        cd output
+        zip -r -y DeepSeek-iOS-unsigned.zip *.app
+        ls -la
+
+    - name: Upload build artifact
       uses: actions/upload-artifact@v4
       with:
-        name: DeepSeek-iOS
-        path: DeepSeek-iOS/Build/Exported/DeepSeek-iOS.ipa
-        retention-days: 7
+        name: DeepSeek-iOS-unsigned
+        path: output/DeepSeek-iOS-unsigned.zip
+        if-no-files-found: error

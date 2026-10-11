@@ -24,8 +24,7 @@ class ThemeManager: ObservableObject {
 struct iPhone16ProMaxOptimizations: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .environment(\.sizeCategory, .medium)
-            .dynamicTypeSize(.xSmall... XLarge)
+            .dynamicTypeSize(.xSmall ... .xLarge)
             .preference(key: SizeCategoryPreferenceKey.self, value: .medium)
     }
 }
@@ -38,8 +37,8 @@ extension View {
 
 /// 动态类型偏好键
 struct SizeCategoryPreferenceKey: PreferenceKey {
-    static var defaultValue: TextSizeCategory = .medium
-    static func reduce(value: inout TextSizeCategory, nextValue: () -> TextSizeCategory) {
+    static var defaultValue: DynamicTypeSize = .medium
+    static func reduce(value: inout DynamicTypeSize, nextValue: () -> DynamicTypeSize) {
         value = nextValue()
     }
 }

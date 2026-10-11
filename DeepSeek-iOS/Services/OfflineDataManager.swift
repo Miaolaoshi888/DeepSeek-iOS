@@ -99,11 +99,11 @@ class OfflineDataManager: ObservableObject {
         let context = container.newBackgroundContext()
         context.perform {
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Message")
-            let deleteRequest = NSDeleteRequest(fetchRequest: fetchRequest)
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
             try? context.execute(deleteRequest)
             
             let chatFetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "Chat")
-            let chatDeleteRequest = NSDeleteRequest(fetchRequest: chatFetchRequest)
+            let chatDeleteRequest = NSBatchDeleteRequest(fetchRequest: chatFetchRequest)
             try? context.execute(chatDeleteRequest)
             
             do {

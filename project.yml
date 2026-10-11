@@ -1,0 +1,45 @@
+name: DeepSeek-iOS
+options:
+  bundleIdPrefix: com.deepseek
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  xcodeVersion: "15.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+
+targets:
+  DeepSeek-iOS:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      # 逐个显式声明源码目录，避免把文档 / 试验目录混进 target
+      - path: DeepSeek-iOS/DeepSeekApp.swift
+      - path: DeepSeek-iOS/AppViewModel.swift
+      - path: DeepSeek-iOS/Models
+      - path: DeepSeek-iOS/Services
+      - path: DeepSeek-iOS/ViewModels
+      - path: DeepSeek-iOS/Views
+      - path: DeepSeek-iOS/Utils
+      - path: DeepSeek-iOS/LocalMode
+      # 资源目录（xcodegen 自动识别 .xcassets 为资源）
+      - path: DeepSeek-iOS/Assets.xcassets
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.deepseek.ai
+        PRODUCT_NAME: DeepSeek-iOS
+        INFOPLIST_FILE: DeepSeek-iOS/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_EMIT_LOC_STRINGS: YES
+        ENABLE_PREVIEWS: YES
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO

@@ -1,21 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// 本地模式 - 不依赖远程服务器
-@main
-struct DeepSeekLocalApp: App {
-    @StateObject private var viewModel = LocalChatViewModel()
-    
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-                .environmentObject(viewModel)
-                .onAppear {
-                    viewModel.loadFromLocal()
-                }
-        }
-    }
-}
+/// 本地模式资源（辅助类型，不提供 App 入口）
 
 /// 本地聊天视图模型
 class LocalChatViewModel: ObservableObject {
@@ -26,6 +12,10 @@ class LocalChatViewModel: ObservableObject {
     private let storage = LocalStorageService.shared
     
     init() {
+        loadChats()
+    }
+    
+    func loadFromLocal() {
         loadChats()
     }
     

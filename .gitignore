@@ -1,0 +1,35 @@
+# macOS
+.DS_Store
+
+# Build artifacts
+build/
+build-logs/
+logs/
+logs2/
+logs3/
+logs6/
+logs7/
+logs8/
+output/
+DerivedData/
+*.xcarchive
+
+# Generated Xcode project (created by xcodegen in CI)
+DeepSeek-iOS.xcodeproj/
+
+# Backup folders
+*.backup/
+*.backup2/
+
+# Archives
+*.zip
+*.gz
+
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png

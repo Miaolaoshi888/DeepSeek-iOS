@@ -1,10 +1,11 @@
 import SwiftUI
 import PhotosUI
+import UniformTypeIdentifiers
 
 /// 文件上传视图
 struct FileUploadView: View {
     @State private var selectedItems: [PhotosPickerItem] = []
-    @State private var files: [UploadedFile] = []
+    @State private var files: [FileData] = []
     @State private var showingImporter = false
     @State private var analysisResult = ""
     
@@ -29,12 +30,11 @@ struct FileUploadView: View {
                     ) {
                         Label("添加图片", systemImage: "photo.fill")
                     }
-                    .fileImporter(
-                        isPresented: $showingImporter,
-                        allowedContentTypes: [.pdf, .jpeg, .png, .plainText, .xml],
-                        allowsMultipleSelection: true
-                    ) { result in
-                        handleSelection(result)
+                    
+                    Button {
+                        showingImporter = true
+                    } label: {
+                        Label("添加文件", systemImage: "folder.fill")
                     }
                     
                     Button("分析文件") {
@@ -44,6 +44,13 @@ struct FileUploadView: View {
                     .disabled(files.isEmpty)
                 }
                 .padding()
+                .fileImporter(
+                    isPresented: $showingImporter,
+                    allowedContentTypes: [.pdf, .jpeg, .png, .plainText, .xml],
+                    allowsMultipleSelection: true
+                ) { result in
+                    handleSelection(result)
+                }
                 
                 // 分析结果
                 if !analysisResult.isEmpty {
@@ -62,9 +69,13 @@ struct FileUploadView: View {
         .onChange(of: selectedItems) { newItems in
             for item in newItems {
                 Task {
-                    if let data = try? await item.loadTransferable(),
-                       let file = data as? FileData {
-                        files.append(FileData(id: UUID(), name: file.name, type: file.type, data: file.data))
+                    if let data = try? await item.loadTransferable(type: Data.self) {
+                        files.append(FileData(
+                            id: UUID(),
+                            name: "图片_\(files.count + 1).jpg",
+                            type: "JPEG Image",
+                            data: data
+                        ))
                     }
                 }
             }

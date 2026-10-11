@@ -8,15 +8,15 @@ struct ChatDetailView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @State private var messageText = ""
     @State private var isGenerating = false
-    @State private var selectedModel: String
+    @State private var selectedModel = "agnes-2.5-flash"
     @State private var showPresets = false
     @State private var showVoiceInput = false
+    @State private var showModelPicker = false
     @State private var attachments: [Attachment] = []
     
     init(chat: Chat, viewModel: ChatViewModel) {
         self.chat = chat
         self.viewModel = viewModel
-        _selectedModel = State(initialValue: appViewModel.defaultModel)
     }
     
     var body: some View {
@@ -107,8 +107,6 @@ struct ChatDetailView: View {
                 }
         }
     }
-    
-    private var showModelPicker = false
     
     private func sendMessage() {
         guard !messageText.trimmingCharacters(in: .whitespaces).isEmpty else { return }
