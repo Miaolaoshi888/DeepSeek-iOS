@@ -13,30 +13,33 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Select Xcode Version
+    - name: Set up Xcode
       run: sudo xcode-select -switch /Applications/Xcode_15.0.app
     
-    - name: Build for iOS
+    - name: Build
       run: |
+        cd DeepSeek-iOS
         xcodebuild build \
           -scheme DeepSeek-iOS \
           -destination 'generic/platform=iOS' \
           -configuration Release \
           CODE_SIGNING_ALLOWED=NO \
-          | xcpretty
+          2>&1 | tee build.log
     
     - name: Archive
       run: |
+        cd DeepSeek-iOS
         xcodebuild archive \
           -scheme DeepSeek-iOS \
           -destination 'generic/platform=iOS' \
           -configuration Release \
           -archivePath Build/DeepSeek-iOS.xcarchive \
           CODE_SIGNING_ALLOWED=NO \
-          | xcpretty
+          2>&1 | tee archive.log
     
     - name: Export IPA
       run: |
+        cd DeepSeek-iOS
         cat > ExportOptions.plist << 'EOF'
         <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -51,14 +54,14 @@ jobs:
         </dict>
         </plist>
         EOF
-        
         xcodebuild -exportArchive \
           -archivePath Build/DeepSeek-iOS.xcarchive \
           -exportPath Build/Exported \
-          -exportOptionsPlist ExportOptions.plist
+          -exportOptionsPlist ExportOptions.plist \
+          2>&1 | tee export.log
     
     - name: Upload IPA
       uses: actions/upload-artifact@v3
       with:
         name: DeepSeek-iOS
-        path: Build/Exported/DeepSeek-iOS.ipa
+        path: DeepSeek-iOS/Build/Exported/DeepSeek-iOS.ipa
