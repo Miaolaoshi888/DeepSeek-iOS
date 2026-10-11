@@ -160,9 +160,7 @@ struct VoiceInputView: View {
                 try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
                 try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
                 
-                let recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { [weak self] result, error in
-                    guard let self = self else { return }
-                    
+                let recognitionTask = recognizer.recognitionTask(with: recognitionRequest) { result, error in
                     if let result = result {
                         DispatchQueue.main.async {
                             self.transcript = result.bestTranscription.formattedString
