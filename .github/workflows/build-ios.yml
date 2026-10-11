@@ -16,6 +16,9 @@ jobs:
     - name: Set up Xcode
       run: sudo xcode-select -switch /Applications/Xcode_15.0.app
     
+    - name: List files
+      run: ls -la && ls -la DeepSeek-iOS/
+    
     - name: Build
       run: |
         cd DeepSeek-iOS
@@ -23,7 +26,8 @@ jobs:
           -scheme DeepSeek-iOS \
           -destination 'generic/platform=iOS' \
           -configuration Release \
-          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO \
+          2>&1 | tee build.log
         
     - name: Archive
       run: |
@@ -33,15 +37,31 @@ jobs:
           -destination 'generic/platform=iOS' \
           -configuration Release \
           -archivePath Build/DeepSeek-iOS.xcarchive \
-          CODE_SIGNING_ALLOWED=NO
+          CODE_SIGNING_ALLOWED=NO \
+          2>&1 | tee archive.log
         
     - name: Export IPA
       run: |
         cd DeepSeek-iOS
+        cat > ExportOptions.plist << 'EOF'
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>method</key>
+            <string>development</string>
+            <key>uploadBitcode</key>
+            <false/>
+            <key>uploadSymbols</key>
+            <true/>
+        </dict>
+        </plist>
+        EOF
         xcodebuild -exportArchive \
           -archivePath Build/DeepSeek-iOS.xcarchive \
           -exportPath Build/Exported \
-          -exportOptionsPlist ExportOptions.plist
+          -exportOptionsPlist ExportOptions.plist \
+          2>&1 | tee export.log
         
     - name: Upload IPA
       uses: actions/upload-artifact@v3
